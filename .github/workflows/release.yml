@@ -1,0 +1,42 @@
+name: release
+on:
+  push:
+    branches: [main]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org
+
+      - name: Check if CHANGELOG changed
+        id: changed
+        run: |
+          if git diff --name-only HEAD~1 | grep -q CHANGELOG.md; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version and tag
+        if: steps.changed.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          npm version patch --no-git-tag-version
+          git add package.json CHANGELOG.md
+          git commit -m "chore: bump version [skip ci]"
+          git tag v$(node -p "require('./package.json').version")
+          git push --follow-tags
+
+      - name: Publish to npm
+        if: steps.changed.outputs.changed == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

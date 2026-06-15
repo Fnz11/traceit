@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- **GitHub Actions CI workflow**: added `.github/workflows/validate.yml` that runs `npx traceit-cli validate` on every push and PR. Users can copy it directly.
+- **CI template for users**: `.github/workflows/validate.yml` as a copy-paste example in README so users can auto-check annotations on push/PR.
+- **Release workflow for this repo**: `.github/workflows/release.yml` auto-bumps package.json version, tags, and publishes to npm when CHANGELOG.md changes on main.
 
 ### Fixed
 

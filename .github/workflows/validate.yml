@@ -1,4 +1,4 @@
-name: Check traceit annotations
+name: validate
 on: [push, pull_request]
 jobs:
   validate:
